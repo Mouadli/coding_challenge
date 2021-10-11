@@ -17,7 +17,7 @@
 # to create and delete a product or category from the command line
 - Run __php artisan product:create --name= --description= --price= --category_id=__
 - Run __php artisan product:delete --id=__
-- Run __php artisan category:create --name= --category_parent__ category_parent (optional)
+- Run __php artisan category:create --name= --category_parent__ (optional)
 - Run __php artisan category:delete --id=__
 
 
