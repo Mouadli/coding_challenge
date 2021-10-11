@@ -39,10 +39,10 @@ class CreateProductCommand extends Command
     public function handle()
     {
         Product::create([
-            'name'=> $this->argument('name'),
-            'description'=> $this->argument('description'),
-            'price'=> $this->argument('price'),
-            'category'=>$this->argument('category') ?? ''
+            'name'=> $this->option('name'),
+            'description'=> $this->option('description'),
+            'price'=> $this->option('price'),
+            'category_id'=>$this->option('category_id')
         ]);
 
         $this->info('Successfully created.');

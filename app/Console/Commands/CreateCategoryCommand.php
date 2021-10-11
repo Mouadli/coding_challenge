@@ -12,7 +12,7 @@ class CreateCategoryCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'category:create {--price=} {--category_parent=?}';
+    protected $signature = 'category:create {name} {categoryParent?}';
 
     /**
      * The console command description.
@@ -39,8 +39,8 @@ class CreateCategoryCommand extends Command
     public function handle()
     {
         Category::create([
-            'name'=>$this->option('name'),
-            'parent_id' =>$this->option('category_parent')
+            'name'=>$this->argument('name'),
+            'parent_id' =>$this->argument('categoryParent') ?? null
         ]);
 
         $this->info('Successfully created.');
