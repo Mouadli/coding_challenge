@@ -4,10 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Category;
 use Illuminate\Http\Request;
-use App\Http\Resources\CategoryResource;
+use App\Repositories\CategoryRepository;
 
 class CategoryController extends Controller
 {
+    
+    private $categoryRepository;
+
+    public function __construct(CategoryRepository $categoryRepository)
+    {
+        $this->categoryRepository = $categoryRepository;
+    }
+
     public function getCategories()
     {
         $categories = Category::all();
@@ -17,14 +25,6 @@ class CategoryController extends Controller
 
     public function index()
     {
-        $categories = Category::withCount(['product' => function ($query) {
-            $query->withFilters(
-                request()->input('prices', []),
-                request()->input('categories', []),
-            );
-        }])
-            ->get();
-
-        return CategoryResource::collection($categories);
+        return $this->categoryRepository->index();
     }
 }

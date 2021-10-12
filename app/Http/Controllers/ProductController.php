@@ -2,49 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\ProductResource;
 use App\Product;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use App\Repositories\ProductRepository;
 
 class ProductController extends Controller
 {
 
+    private $productRepository;
+
+    public function __construct(ProductRepository $productRepository)
+    {
+        $this->productRepository = $productRepository;
+    }
+
     public function store(Request $req)
     {
-        $validator = Validator::make($req->all(), [
-            'name' => 'required|min:3|max:255',
-            'description' => 'min:3',
-            'price' => 'regex:/^[0-9]+$/',
-            'category_id' => 'required'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['status' => 'error', 'errors' => $validator->errors()]);
-        }
-
-        $product = new Product();
-        $product->name = $req['name'];
-        $product->description = $req['description'];
-        $product->price = $req['price'];
-        $product->category_id = $req['category_id'];
-
-        if ($req->hasFile('image')) {
-            $product->image = time() . '_' . $req->image->store('image');
-        }
-
-        $product->save();
+        $this->productRepository->store($req);
     }
 
     public function index()
     {
-        $products = Product::withFilters(
-            request()->input('prices', []),
-            request()->input('categories', []),
-        )->get();
-
-        return ProductResource::collection($products);
+        return $this->productRepository->index();
     }
 
     public function search($name)

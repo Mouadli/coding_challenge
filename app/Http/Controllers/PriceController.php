@@ -4,16 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Services\PriceService;
 use Illuminate\Http\Request;
+use App\Repositories\ProductRepository;
 
 class PriceController extends Controller
 {
+
+    private $productRepository;
+
+    public function __construct(ProductRepository $productRepository)
+    {
+        $this->productRepository = $productRepository;
+    }
+
     public function index(PriceService $priceService)
     {
-        $prices = $priceService->getPrices(
-            request()->input('prices', []),
-            request()->input('categories', []),
-        );
-
-        return response()->json($prices);
+        return $this->productRepository->priceIndex($priceService);
     }
 }
