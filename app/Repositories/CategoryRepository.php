@@ -3,15 +3,41 @@
 namespace App\Repositories;
 
 use App\Category;
-use App\Http\Resources\CategoryResource;
-use Illuminate\Http\UploadedFile;
 
 class CategoryRepository
 {
 
-    public function index()
+    /**
+     * @var Category
+     */
+    protected $category;
+
+    /**
+     * Category constructor.
+     * 
+     * @param Category $category
+     */
+    public function __construct(Category $category)
     {
-        $categories = Category::withCount(['product' => function ($query) {
+        $this->category = $category;
+    }
+
+    /**
+     * Get All Category.
+     */
+    public function getAll()
+    {
+        $data = Category::all();
+
+        return $data;
+    }
+
+    /**
+     * get count product of category from DB
+     */
+    public function countAll()
+    {
+        $data = Category::withCount(['product' => function ($query) {
             $query->withFilters(
                 request()->input('prices', []),
                 request()->input('categories', []),
@@ -19,6 +45,6 @@ class CategoryRepository
         }])
             ->get();
 
-        return CategoryResource::collection($categories);
+        return $data;
     }
 }

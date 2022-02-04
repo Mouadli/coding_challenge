@@ -248,7 +248,7 @@ export default {
       if (this.product.image) {
         data.append("image", this.product.image);
       }
-      axios.post("api/createProduct", data).then((res) => {
+      axios.post('api/createProduct', data).then((res) => {
         if (res.data.status == "error") {
           this.errors = res.data.errors;
         } else {
@@ -265,7 +265,7 @@ export default {
 
     searchdata: function (val) {
       axios.get("/api/search/" + val).then((res) => {
-        this.products = res.data;
+        this.products = res.data.data;
       });
     },
 

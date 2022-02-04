@@ -3,56 +3,72 @@
 namespace App\Repositories;
 
 use App\Product;
-use Illuminate\Support\Facades\Validator;
-use App\Http\Resources\ProductResource;
 use Illuminate\Http\UploadedFile;
 
 class ProductRepository
 {
+    /**
+     * @var Product
+     */
+    protected $product;
 
-    public function store($request)
+    /**
+     * Product constructor
+     * 
+     * @param Product $product
+     */
+    public function __construct(Product $product)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|min:3|max:255',
-            'description' => 'min:3',
-            'price' => 'regex:/^[0-9]+$/',
-            'category_id' => 'required'
-        ]);
+        $this->product = $product;
+    }
 
-        if ($validator->fails()) {
-            return response()->json(['status' => 'error', 'errors' => $validator->errors()]);
-        }
+    /**
+     * Save a product to DB.
+     * 
+     * @param $data
+     * @return Product
+     */
+    public function save($data)
+    {
+        $product = new $this->product;
 
-        $product = new Product();
-        $product->name = $request['name'];
-        $product->description = $request['description'];
-        $product->price = $request['price'];
-        $product->category_id = $request['category_id'];
+        $product->name = $data['name'];
+        $product->description = $data['description'];
+        $product->price = $data['price'];
+        $product->category_id = $data['category_id'];
 
-        if ($request->hasFile('image')) {
-            $product->image = $request->image->store('image');
+        if ($data->hasFile('image')) {
+            $product->image = $data->image->store('image');
         }
 
         $product->save();
+
+        return $product->fresh();
     }
 
-    public function index()
+    /**
+     * Get all products from DB
+     * 
+     * @return mixed
+     */
+    public function getAll()
     {
         $products = Product::withFilters(
             request()->input('prices', []),
             request()->input('categories', []),
         )->get();
 
-        return ProductResource::collection($products);
+        return $products;
     }
 
-    public function priceIndex($priceService)
+    /**
+     * Get Product by name
+     * 
+     * @param string $name
+     * @return mixed
+     */
+    public function getByName($name)
     {
-        $prices = $priceService->getPrices(
-            request()->input('prices', []),
-            request()->input('categories', []),
-        );
-
-        return response()->json($prices);
+        return $this->product->where('name', 'LIKE', '%' . $name . '%')->get();
     }
 }

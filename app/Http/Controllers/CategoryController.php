@@ -3,28 +3,65 @@
 namespace App\Http\Controllers;
 
 use App\Category;
+use App\Http\Resources\CategoryResource;
 use Illuminate\Http\Request;
 use App\Repositories\CategoryRepository;
+use App\Services\CategoryService;
+use Exception;
 
 class CategoryController extends Controller
 {
     
-    private $categoryRepository;
+    /**
+     * @var $categoryService
+     */
+    protected $categoryService;
 
-    public function __construct(CategoryRepository $categoryRepository)
+    /**
+     * Category constructor
+     * 
+     * @param CategoryService $productService
+     */
+    public function __construct(CategoryService $categoryService)
     {
-        $this->categoryRepository = $categoryRepository;
+        $this->categoryService = $categoryService;
     }
-
-    public function getCategories()
-    {
-        $categories = Category::all();
-        return response()->json(['status' => 'success', 'categories' => $categories]);
-    }
-
-
+    
+    /**
+     * Default select of Categories.
+     * 
+     * @return \Illuminate\Http\Response
+     */
     public function index()
     {
-        return $this->categoryRepository->index();
+        try{
+            $result = CategoryResource::collection($this->categoryService->getCountAllCategory());
+        } catch (Exception $e) {
+            $result = [
+                'status' => 500,
+                'error' => $e->getMessage()
+            ];
+        }
+
+        return $result;
+    }
+
+    /**
+     * Retrieve all Categories
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function getCategories()
+    {
+        try{
+            $result = ['status' => 'success', 'categories' => $this->categoryService->getAllCategory()];
+        } catch (Exception $e) {
+            $result = [
+                'status' => 500,
+                'error' => $e->getMessage()
+            ];
+        }
+
+        return response()->json($result);
     }
 }

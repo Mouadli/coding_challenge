@@ -3,12 +3,36 @@
 namespace App\Services;
 
 use App\Product;
+use App\Repositories\PriceRepository;
 
 class PriceService
 {
-    private $prices;
-    private $categories;
+    /**
+     * @var $priceRepository
+     * @var $prices
+     * @var $categories
+     */
+    protected $priceRepository;
+    protected $prices;
+    protected $categories;
 
+    /**
+     * constructor
+     * 
+     * @param PriceRepository $priceRepository
+     */
+    public function __construct(PriceRepository $priceRepository)
+    {
+        $this->priceRepository = $priceRepository;
+    }
+
+    /**
+     * get count of product by price.
+     * 
+     * @param Array $prices
+     * @param Array $category
+     * @return Array
+     */
     public function getPrices($prices, $categories)
     {
         $this->prices = $prices;
@@ -18,28 +42,25 @@ class PriceService
         foreach(Product::PRICES as $index => $name) {
             $formattedPrices[] = [
                 'name' => $name,
-                'products_count' => $this->getProductCount($index)
+                'products_count' => $this->priceRepository->getProductCount($index, $this->prices, $this->categories)
             ];
         }
 
         return $formattedPrices;
     }
 
-    private function getProductCount($index)
+    /**
+     * filter by prices or/and categories
+     * 
+     * @return String
+     */
+    public function priceIndex()
     {
-        return Product::withFilters($this->prices, $this->categories)
-            ->when($index == 0, function ($query) {
-                $query->where('price', '<', '5000');
-            })
-            ->when($index == 1, function ($query) {
-                $query->whereBetween('price', ['5000', '10000']);
-            })
-            ->when($index == 2, function ($query) {
-                $query->whereBetween('price', ['10000', '50000']);
-            })
-            ->when($index == 3, function ($query) {
-                $query->where('price', '>', '50000');
-            })
-            ->count();
+        $prices = $this->getPrices(
+            request()->input('prices', []),
+            request()->input('categories', []),
+        );
+
+        return $prices;
     }
 }

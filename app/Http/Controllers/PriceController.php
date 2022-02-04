@@ -5,19 +5,42 @@ namespace App\Http\Controllers;
 use App\Services\PriceService;
 use Illuminate\Http\Request;
 use App\Repositories\ProductRepository;
+use Exception;
 
 class PriceController extends Controller
 {
 
-    private $productRepository;
+    /**
+     * @var $priceService
+     */
+    protected $priceService;
 
-    public function __construct(ProductRepository $productRepository)
+    /**
+     * Constructor
+     * 
+     * @param PriceService $priceService
+     */
+    public function __construct(PriceService $priceService)
     {
-        $this->productRepository = $productRepository;
+        $this->priceService = $priceService;
     }
 
-    public function index(PriceService $priceService)
+    /**
+     * Filters
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
     {
-        return $this->productRepository->priceIndex($priceService);
+        try{
+            $result = $this->priceService->priceIndex();
+        } catch (Exception $e) {
+            $result =[
+                'status' => 500,
+                'error' => $e->getMessage()
+            ];
+        }
+
+        return response()->json($result);
     }
 }
