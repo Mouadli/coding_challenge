@@ -10,25 +10,25 @@ class PriceRepository
     /**
      * Get count of each product by price
      * 
-     * @param $index
-     * @param $prices
-     * @param $category
+     * @param int $index
+     * @param array $prices
+     * @param array $category
      * @return integer
      */
-    public function getProductCount($index, $prices, $categories)
+    public function getProductCount(int $index, array $prices, array $categories)
     {
         return Product::withFilters($prices, $categories)
             ->when($index == 0, function ($query) {
-                $query->where('price', '<', '50');
+                $query->where('price', '<', '5000');
             })
             ->when($index == 1, function ($query) {
-                $query->whereBetween('price', ['50', '100']);
+                $query->whereBetween('price', ['5000', '10000']);
             })
             ->when($index == 2, function ($query) {
-                $query->whereBetween('price', ['100', '500']);
+                $query->whereBetween('price', ['10000', '50000']);
             })
             ->when($index == 3, function ($query) {
-                $query->where('price', '>', '500');
+                $query->where('price', '>', '50000');
             })
             ->count();
     }

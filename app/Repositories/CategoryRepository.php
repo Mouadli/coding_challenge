@@ -25,9 +25,9 @@ class CategoryRepository
     /**
      * Get All Category.
      */
-    public function getAll()
+    public function getAll(): object
     {
-        $data = Category::all();
+        $data = $this->category->all();
 
         return $data;
     }
@@ -35,12 +35,12 @@ class CategoryRepository
     /**
      * get count product of category from DB
      */
-    public function countAll()
+    public function countAll(object $reqData): object
     {
-        $data = Category::withCount(['product' => function ($query) {
+        $data = $this->category->withCount(['products' => function ($query) use ($reqData) {
             $query->withFilters(
-                request()->input('prices', []),
-                request()->input('categories', []),
+                $reqData->prices,
+                $reqData->categories,
             );
         }])
             ->get();

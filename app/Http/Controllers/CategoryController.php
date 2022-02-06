@@ -34,8 +34,13 @@ class CategoryController extends Controller
      */
     public function index()
     {
+        $reqData = (object) [
+            'prices' => request()->input('prices', []),
+            'categories' => request()->input('categories', []),
+        ];
+
         try{
-            $result = CategoryResource::collection($this->categoryService->getCountAllCategory());
+            $result = CategoryResource::collection($this->categoryService->getCountAllCategory($reqData));
         } catch (Exception $e) {
             $result = [
                 'status' => 500,

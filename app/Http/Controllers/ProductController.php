@@ -37,18 +37,24 @@ class ProductController extends Controller
     public function store(Request $req)
     {
         try {
-            $result = [
-                'status' => 201,
-                'data' => $this->productService->saveProduct($req)
-            ];
+            $res = $this->productService->saveProduct($req);
+            if ($res->errors) {
+                $result = [
+                    'status' => 500,
+                    'data' => $res
+                ];
+            } else {
+                $result = [
+                    'status' => 201,
+                    'data' => $res
+                ];
+            }
         } catch (Exception $e) {
             $result = [
-                'status' => "error",
+                'status' => 500,
                 'error' => $e->getMessage()
             ];
         }
-
-        dd("error");
 
         return response()->json($result);
     }
@@ -60,11 +66,16 @@ class ProductController extends Controller
      */
     public function index()
     {
+        $reqData = (object) [
+            'prices' => request()->input('prices', []),
+            'categories' => request()->input('categories', []),
+        ];
+
         try {
-            $result = ProductResource::collection($this->productService->getAllProduct());
+            $result = ProductResource::collection($this->productService->getAllProduct($reqData));
         } catch (Exception $e) {
             $result = [
-                'status' => "error",
+                'status' => 500,
                 'error' => $e->getMessage()
             ];
         }
@@ -87,7 +98,7 @@ class ProductController extends Controller
             ];
         } catch (Exception $e) {
             $result = [
-                'status' => "error",
+                'status' => 500,
                 'error' => $e->getMessage()
             ];
         }

@@ -32,10 +32,12 @@ class PriceController extends Controller
      */
     public function index()
     {
-        try{
-            $result = $this->priceService->priceIndex();
+        $prices = request()->input('prices', []);
+        $categories = request()->input('categories', []);
+        try {
+            $result = $this->priceService->priceIndex($prices, $categories);
         } catch (Exception $e) {
-            $result =[
+            $result = [
                 'status' => 500,
                 'error' => $e->getMessage()
             ];

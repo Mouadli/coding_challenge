@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Repositories\ProductRepository;
 use Illuminate\Support\Facades\Validator;
-
+use InvalidArgumentException;
 
 class ProductService
 {
@@ -14,7 +14,7 @@ class ProductService
     protected $productRepository;
 
     /**
-     * Product constructor
+     * ProductService constructor
      * 
      * @param ProductRepository $productRepository
      */
@@ -29,7 +29,7 @@ class ProductService
      * @param object $data
      * @return String
      */
-    public function saveProduct($data)
+    public function saveProduct(object $data)
     {
         $validator = Validator::make($data->all(), [
             'name' => 'required|min:3|max:255',
@@ -39,7 +39,9 @@ class ProductService
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['status' => 'error', 'errors' => $validator->errors()]);
+            return [
+                'errors' => $validator->errors()
+            ];
         }
 
         $result = $this->productRepository->save($data);
@@ -50,21 +52,22 @@ class ProductService
     /**
      * Get all product.
      * 
+     * @param object $reqData
+     * @return 
      */
-    public function getAllProduct()
+    public function getAllProduct(object $reqData)
     {
-        return $this->productRepository->getAll();
+        return $this->productRepository->getAll($reqData->prices, $reqData->categories);
     }
 
     /**
      * Get product by name.
      * 
-     * @param $name
+     * @param mixed $name
      * @return String
      */
-    public function getByName($name)
+    public function getByName(string $name)
     {
         return $this->productRepository->getByName($name);
     }
-
 }

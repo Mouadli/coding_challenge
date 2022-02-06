@@ -13,7 +13,7 @@ class ProductRepository
     protected $product;
 
     /**
-     * Product constructor
+     * ProductRepository constructor
      * 
      * @param Product $product
      */
@@ -28,7 +28,7 @@ class ProductRepository
      * @param $data
      * @return Product
      */
-    public function save($data)
+    public function save(mixed $data)
     {
         $product = new $this->product;
 
@@ -51,12 +51,9 @@ class ProductRepository
      * 
      * @return mixed
      */
-    public function getAll()
+    public function getAll(array $prices, array $categories)
     {
-        $products = Product::withFilters(
-            request()->input('prices', []),
-            request()->input('categories', []),
-        )->get();
+        $products = $this->product->withFilters($prices, $categories)->get();
 
         return $products;
     }
@@ -67,7 +64,7 @@ class ProductRepository
      * @param string $name
      * @return mixed
      */
-    public function getByName($name)
+    public function getByName(string $name)
     {
         return $this->product->where('name', 'LIKE', '%' . $name . '%')->get();
     }

@@ -24,7 +24,6 @@ class CategoryService
 
     /**
      * Get all category.
-     * 
      */
     public function getAllCategory()
     {
@@ -33,11 +32,10 @@ class CategoryService
 
     /**
      * Get count of all category.
-     * 
      */
-    public function getCountAllCategory()
+    public function getCountAllCategory(object $reqData)
     {
-        $result = $this->categoryRepository->countAll();
+        $result = $this->categoryRepository->countAll($reqData);
 
         return $result;
     }
