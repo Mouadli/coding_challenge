@@ -38,10 +38,10 @@ class ProductController extends Controller
     {
         try {
             $res = $this->productService->saveProduct($req);
-            if ($res->errors) {
+            if ($res['errors']) {
                 $result = [
                     'status' => 500,
-                    'data' => $res
+                    'errors' => $res['errors']
                 ];
             } else {
                 $result = [

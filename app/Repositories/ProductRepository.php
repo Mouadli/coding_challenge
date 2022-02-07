@@ -28,7 +28,7 @@ class ProductRepository
      * @param $data
      * @return Product
      */
-    public function save(mixed $data)
+    public function save(object $data)
     {
         $product = new $this->product;
 

@@ -248,10 +248,11 @@ export default {
       if (this.product.image) {
         data.append("image", this.product.image);
       }
-      axios.post('api/createProduct', data).then((res) => {
-        if (res.data.status == "error") {
+      axios.post("api/createProduct", data).then((res) => {
+        if (res.data.status == 500) {
           this.errors = res.data.errors;
         } else {
+          this.products.push(res.data.data);
           this.product = {
             id: "",
             name: "",
