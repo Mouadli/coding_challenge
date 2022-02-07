@@ -33,7 +33,7 @@ class CategoryService
     /**
      * Get count of all category.
      */
-    public function getCountAllCategory(object $reqData)
+    public function getCountAllCategory(array $reqData)
     {
         $result = $this->categoryRepository->countAll($reqData);
 

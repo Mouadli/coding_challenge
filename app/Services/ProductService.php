@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Product;
 use App\Repositories\ProductRepository;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Validator;
 use InvalidArgumentException;
 
@@ -26,12 +28,12 @@ class ProductService
     /**
      * Validate and store Product data
      * 
-     * @param object $data
-     * @return String
+     * @param array $data
+     * @return Product
      */
-    public function saveProduct(object $data)
+    public function saveProduct(array $data): Product
     {
-        $validator = Validator::make($data->all(), [
+        $validator = Validator::make($data, [
             'name' => 'required|min:3|max:255',
             'description' => 'min:3',
             'price' => 'regex:/^[0-9]+$/',
@@ -50,23 +52,31 @@ class ProductService
     }
 
     /**
+     * Upload Image of product
+     */
+    public function updateImage(string $name, $id): Product
+    {
+        return $this->productRepository->saveImage($id, $name);
+    }
+
+    /**
      * Get all product.
      * 
-     * @param object $reqData
-     * @return 
+     * @param array $reqData
+     * @return Product
      */
-    public function getAllProduct(object $reqData)
+    public function getAllProduct(array $reqData): Collection
     {
-        return $this->productRepository->getAll($reqData->prices, $reqData->categories);
+        return $this->productRepository->getAll($reqData['prices'], $reqData['categories']);
     }
 
     /**
      * Get product by name.
      * 
      * @param mixed $name
-     * @return String
+     * @return Collection
      */
-    public function getByName(string $name)
+    public function getByName(string $name): Collection
     {
         return $this->productRepository->getByName($name);
     }

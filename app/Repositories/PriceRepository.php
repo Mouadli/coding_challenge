@@ -6,7 +6,7 @@ use App\Product;
 
 class PriceRepository
 {
-    
+
     /**
      * Get count of each product by price
      * 
@@ -15,7 +15,7 @@ class PriceRepository
      * @param array $category
      * @return integer
      */
-    public function getProductCount(int $index, array $prices, array $categories)
+    public function getProductCount(int $index, array $prices, array $categories): int
     {
         return Product::withFilters($prices, $categories)
             ->when($index == 0, function ($query) {

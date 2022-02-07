@@ -6,6 +6,7 @@ use App\Services\PriceService;
 use Illuminate\Http\Request;
 use App\Repositories\ProductRepository;
 use Exception;
+use Illuminate\Http\JsonResponse as jsonResponse;
 
 class PriceController extends Controller
 {
@@ -30,7 +31,7 @@ class PriceController extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(): jsonResponse
     {
         $result = ['status' => 200];
 

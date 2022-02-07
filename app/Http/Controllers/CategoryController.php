@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Repositories\CategoryRepository;
 use App\Services\CategoryService;
 use Exception;
+use Illuminate\Http\JsonResponse as Response;
 
 class CategoryController extends Controller
 {
@@ -29,18 +30,19 @@ class CategoryController extends Controller
 
     /**
      * Default select of Categories.
-     * 
-     * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(): Response
     {
-        $reqData = (object) [
+        $reqData = [
             'prices' => request()->input('prices', []),
             'categories' => request()->input('categories', []),
         ];
 
         try {
-            $result = CategoryResource::collection($this->categoryService->getCountAllCategory($reqData));
+            $result = [
+                'status' => 200,
+                'data' => $this->categoryService->getCountAllCategory($reqData)
+            ];
         } catch (Exception $e) {
             $result = [
                 'status' => 500,
@@ -48,15 +50,13 @@ class CategoryController extends Controller
             ];
         }
 
-        return $result;
+        return response()->json($result, $result['status']);
     }
 
     /**
      * Retrieve all Categories
-     * 
-     * @return \Illuminate\Http\Response
      */
-    public function getCategories()
+    public function getCategories():Response
     {
         try {
             $result = [
@@ -70,6 +70,6 @@ class CategoryController extends Controller
             ];
         }
 
-        return response()->json($result,$result['status']);
+        return response()->json($result, $result['status']);
     }
 }

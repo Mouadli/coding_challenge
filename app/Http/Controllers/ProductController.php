@@ -5,10 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Resources\ProductResource;
 use App\Product;
 use Illuminate\Http\Request;
-use Illuminate\Http\UploadedFile;
-use App\Repositories\ProductRepository;
 use App\Services\ProductService;
 use Exception;
+use Illuminate\Http\JsonResponse as Response;
 
 class ProductController extends Controller
 {
@@ -32,12 +31,19 @@ class ProductController extends Controller
      * Store a new product.
      * 
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
      */
-    public function store(Request $req)
+    public function store(Request $req): Response
     {
+        $data = $req->all();
+
         try {
-            $res = $this->productService->saveProduct($req);
+            $res = $this->productService->saveProduct($data);
+
+            if ($req->hasFile('image')) {
+                $imageName = $req->image->store('image');
+                $res = $this->productService->updateImage($imageName, $res['id']);
+            }
+
             if ($res['errors']) {
                 $result = [
                     'status' => 500,
@@ -46,7 +52,8 @@ class ProductController extends Controller
             } else {
                 $result = [
                     'status' => 201,
-                    'data' => $res
+                    'data' => $res,
+                    'req' => $req
                 ];
             }
         } catch (Exception $e) {
@@ -61,35 +68,35 @@ class ProductController extends Controller
 
     /**
      * Retrieve all Product.
-     * 
-     * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(): Response
     {
-        $reqData = (object) [
+        $reqData = [
             'prices' => request()->input('prices', []),
             'categories' => request()->input('categories', []),
         ];
 
         try {
-            $result = ProductResource::collection($this->productService->getAllProduct($reqData));
+            $result = [
+                'status' => 200,
+                'data' => $this->productService->getAllProduct($reqData)
+            ];
         } catch (Exception $e) {
-            $result = response()->json([
+            $result = [
                 'status' => 500,
                 'error' => $e->getMessage()
-            ], 500);
+            ];
         }
 
-        return $result;
+        return response()->json($result, $result['status']);
     }
 
     /**
      * Search a specific resourse.
      * 
      * @param $name
-     * @return \Illuminate\Http\Response
      */
-    public function search(string $name)
+    public function search(string $name): Response
     {
         try {
             $result = [

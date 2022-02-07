@@ -3,31 +3,16 @@
 namespace App\Repositories;
 
 use App\Category;
+use Illuminate\Database\Eloquent\Collection;
 
 class CategoryRepository
 {
-
-    /**
-     * @var Category
-     */
-    protected $category;
-
-    /**
-     * Category constructor.
-     * 
-     * @param Category $category
-     */
-    public function __construct(Category $category)
-    {
-        $this->category = $category;
-    }
-
     /**
      * Get All Category.
      */
-    public function getAll(): object
+    public function getAll(): Collection
     {
-        $data = $this->category->all();
+        $data = Category::all();
 
         return $data;
     }
@@ -35,12 +20,12 @@ class CategoryRepository
     /**
      * get count product of category from DB
      */
-    public function countAll(object $reqData): object
+    public function countAll(array $reqData): Collection
     {
-        $data = $this->category->withCount(['products' => function ($query) use ($reqData) {
+        $data = Category::withCount(['products' => function ($query) use ($reqData) {
             $query->withFilters(
-                $reqData->prices,
-                $reqData->categories,
+                $reqData['prices'],
+                $reqData['categories'],
             );
         }])
             ->get();
