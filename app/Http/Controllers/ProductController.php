@@ -56,7 +56,7 @@ class ProductController extends Controller
             ];
         }
 
-        return response()->json($result);
+        return response()->json($result, $result['status']);
     }
 
     /**
@@ -74,10 +74,10 @@ class ProductController extends Controller
         try {
             $result = ProductResource::collection($this->productService->getAllProduct($reqData));
         } catch (Exception $e) {
-            $result = [
+            $result = response()->json([
                 'status' => 500,
                 'error' => $e->getMessage()
-            ];
+            ], 500);
         }
 
         return $result;
@@ -89,7 +89,7 @@ class ProductController extends Controller
      * @param $name
      * @return \Illuminate\Http\Response
      */
-    public function search($name)
+    public function search(string $name)
     {
         try {
             $result = [
@@ -103,6 +103,6 @@ class ProductController extends Controller
             ];
         }
 
-        return response()->json($result);
+        return response()->json($result, $result['status']);
     }
 }

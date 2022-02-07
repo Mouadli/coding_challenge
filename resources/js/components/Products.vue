@@ -302,7 +302,7 @@ export default {
           params: _.omit(this.selected, "prices"),
         })
         .then((response) => {
-          this.prices = response.data;
+          this.prices = response.data.prices;
           this.loading = false;
         })
         .catch(function (error) {

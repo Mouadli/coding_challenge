@@ -11,7 +11,7 @@ use Exception;
 
 class CategoryController extends Controller
 {
-    
+
     /**
      * @var $categoryService
      */
@@ -26,7 +26,7 @@ class CategoryController extends Controller
     {
         $this->categoryService = $categoryService;
     }
-    
+
     /**
      * Default select of Categories.
      * 
@@ -39,7 +39,7 @@ class CategoryController extends Controller
             'categories' => request()->input('categories', []),
         ];
 
-        try{
+        try {
             $result = CategoryResource::collection($this->categoryService->getCountAllCategory($reqData));
         } catch (Exception $e) {
             $result = [
@@ -58,8 +58,11 @@ class CategoryController extends Controller
      */
     public function getCategories()
     {
-        try{
-            $result = ['status' => 'success', 'categories' => $this->categoryService->getAllCategory()];
+        try {
+            $result = [
+                'status' => 200,
+                'categories' => $this->categoryService->getAllCategory()
+            ];
         } catch (Exception $e) {
             $result = [
                 'status' => 500,
@@ -67,6 +70,6 @@ class CategoryController extends Controller
             ];
         }
 
-        return response()->json($result);
+        return response()->json($result,$result['status']);
     }
 }

@@ -32,10 +32,12 @@ class PriceController extends Controller
      */
     public function index()
     {
+        $result = ['status' => 200];
+
         $prices = request()->input('prices', []);
         $categories = request()->input('categories', []);
         try {
-            $result = $this->priceService->priceIndex($prices, $categories);
+            $result['prices'] = $this->priceService->priceIndex($prices, $categories);
         } catch (Exception $e) {
             $result = [
                 'status' => 500,
@@ -43,6 +45,6 @@ class PriceController extends Controller
             ];
         }
 
-        return response()->json($result);
+        return response()->json($result, $result['status']);
     }
 }
